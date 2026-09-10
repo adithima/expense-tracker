@@ -4,31 +4,35 @@ const Notification = require('../models/Notification');
 const mongoose = require('mongoose');
 
 /**
- * Computes the start/end Date range for a budget's CURRENT active
- * period, based on its `period` type. Monthly/weekly windows are
- * computed live off today's date (never stored), so they're always
- * correct without needing a cron job to "roll over" anything.
- * Custom periods just use the budget's own stored startDate/endDate.
+ * Computes the start/end Date range for a budget's period.
+ * @param {Object} budget
+ * @param {number} [offset=0] - How many periods back from the CURRENT
+ *   one to compute. 0 = current period (default, unchanged behavior).
+ *   1 = previous period, 2 = two periods ago, etc. Only meaningful for
+ *   monthly/weekly; custom periods ignore offset since they're a fixed
+ *   stored range.
  */
-const getCurrentPeriodRange = (budget) => {
+const getCurrentPeriodRange = (budget, offset = 0) => {
   const now = new Date();
 
   if (budget.period === 'monthly') {
-    const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
-    const end = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0, 0);
-    return { start, end, periodKey: `${now.getFullYear()}-${now.getMonth() + 1}` };
+    const start = new Date(now.getFullYear(), now.getMonth() - offset, 1, 0, 0, 0, 0);
+    const end = new Date(now.getFullYear(), now.getMonth() - offset + 1, 1, 0, 0, 0, 0);
+    return { start, end, periodKey: `${start.getFullYear()}-${start.getMonth() + 1}` };
   }
 
   if (budget.period === 'weekly') {
     // Week starts Sunday, matching the Calendar heatmap's SUN-first layout
     const dayOfWeek = now.getDay(); // 0 = Sunday
-    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek, 0, 0, 0, 0);
+    const currentWeekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek, 0, 0, 0, 0);
+    const start = new Date(currentWeekStart);
+    start.setDate(start.getDate() - offset * 7);
     const end = new Date(start);
     end.setDate(end.getDate() + 7);
     return { start, end, periodKey: `${start.getFullYear()}-${start.getMonth() + 1}-${start.getDate()}` };
   }
 
-  // custom
+  // custom - offset doesn't apply, it's a fixed stored range
   return {
     start: budget.startDate,
     end: budget.endDate,
@@ -117,6 +121,52 @@ const computeBudgetStatus = async (budget, userId) => {
 };
 
 /**
+ * Computes spend for a PAST period of a budget (read-only — never
+ * touches notifications or the alert-tracking fields, since those only
+ * make sense for the live/current period). Used for the "view history"
+ * navigation on the Budgets page.
+ * @param {Object} budget
+ * @param {string} userId
+ * @param {number} offset - periods back from current (1 = last month/week, etc.)
+ */
+const computeBudgetHistory = async (budget, userId, offset) => {
+  const { start, end } = getCurrentPeriodRange(budget, offset);
+
+  const matchStage = {
+    user: new mongoose.Types.ObjectId(userId),
+    type: 'expense',
+    date: { $gte: start, $lt: end },
+  };
+  if (!budget.isOverall) {
+    matchStage.category = budget.category;
+  }
+
+  const result = await Transaction.aggregate([
+    { $match: matchStage },
+    { $group: { _id: null, spent: { $sum: '$amount' } } },
+  ]);
+
+  const spent = result.length > 0 ? result[0].spent : 0;
+  const percentUsed = budget.limitAmount > 0 ? (spent / budget.limitAmount) * 100 : 0;
+  const remaining = budget.limitAmount - spent;
+
+  return {
+    budgetId: budget._id,
+    category: budget.isOverall ? null : budget.category,
+    isOverall: budget.isOverall,
+    period: budget.period,
+    periodStart: start,
+    periodEnd: end,
+    offset,
+    limitAmount: budget.limitAmount,
+    spent,
+    remaining,
+    percentUsed: Math.round(percentUsed * 10) / 10,
+    limitExceeded: spent > budget.limitAmount,
+  };
+};
+
+/**
  * @desc    Create a new budget (category-specific or overall)
  * @route   POST /api/budgets
  * @access  Private
@@ -142,8 +192,6 @@ const createBudget = async (req, res, next) => {
       budget,
     });
   } catch (error) {
-    // Duplicate key from the partial unique indexes (active budget
-    // already exists for this category / already have an overall one)
     if (error.code === 11000) {
       return res.status(409).json({
         success: false,
@@ -208,6 +256,43 @@ const getBudgetStatus = async (req, res, next) => {
 };
 
 /**
+ * @desc    Get a PAST period's spend for a budget (e.g. last month).
+ * @route   GET /api/budgets/:id/history?offset=1
+ * @access  Private
+ * Query params:
+ *   offset - how many periods back (1 = previous month/week, 2 = two back, etc.)
+ *            Defaults to 1. Not meaningful for 'custom' period budgets.
+ */
+const getBudgetHistory = async (req, res, next) => {
+  try {
+    const offset = parseInt(req.query.offset, 10) || 1;
+
+    if (offset < 1) {
+      return res.status(400).json({ success: false, message: 'offset must be 1 or greater' });
+    }
+
+    const budget = await Budget.findOne({ _id: req.params.id, user: req.user._id });
+
+    if (!budget) {
+      return res.status(404).json({ success: false, message: 'Budget not found' });
+    }
+
+    if (budget.period === 'custom') {
+      return res.status(400).json({
+        success: false,
+        message: 'History navigation is not available for custom-range budgets',
+      });
+    }
+
+    const history = await computeBudgetHistory(budget, req.user._id, offset);
+
+    res.status(200).json({ success: true, budget: history });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * @desc    Update a budget's settings (limit, threshold, active state, etc.)
  * @route   PUT /api/budgets/:id
  * @access  Private
@@ -222,9 +307,6 @@ const updateBudget = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Budget not found' });
     }
 
-    // category/isOverall intentionally NOT editable here — changing what
-    // a budget tracks is conceptually a new budget. User should delete
-    // and recreate instead, avoiding ambiguous history.
     if (limitAmount !== undefined) budget.limitAmount = limitAmount;
     if (period !== undefined) budget.period = period;
     if (startDate !== undefined) budget.startDate = period === 'custom' ? startDate : null;
@@ -232,9 +314,6 @@ const updateBudget = async (req, res, next) => {
     if (alertThreshold !== undefined) budget.alertThreshold = alertThreshold;
     if (isActive !== undefined) budget.isActive = isActive;
 
-    // Any settings change resets the alert flag — e.g. raising the
-    // limit shouldn't leave a stale "already alerted" state hanging
-    // around from before the change.
     budget.alertSentForCurrentPeriod = false;
 
     await budget.save();
@@ -274,19 +353,6 @@ const deleteBudget = async (req, res, next) => {
   }
 };
 
-/**
- * Runs computeBudgetStatus for every ACTIVE budget belonging to a user.
- * This is what actually creates Notification documents when a threshold
- * is crossed (see computeBudgetStatus above) — exported so other
- * controllers (like transactionController) can trigger a budget check
- * right after a transaction changes, instead of only checking when the
- * user happens to visit the Budgets page.
- *
- * Deliberately fire-and-forget friendly: callers can await it or not.
- * Errors are caught internally and logged, never thrown — a failed
- * budget check should never break the transaction request that
- * triggered it.
- */
 const checkBudgetsForUser = async (userId) => {
   try {
     const budgets = await Budget.find({ user: userId, isActive: true });
@@ -300,6 +366,7 @@ module.exports = {
   createBudget,
   getBudgets,
   getBudgetStatus,
+  getBudgetHistory,
   updateBudget,
   deleteBudget,
   checkBudgetsForUser,

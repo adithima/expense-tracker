@@ -25,6 +25,18 @@ export const getBudgetStatus = async (id) => {
 };
 
 /**
+ * Fetch a PAST period's spend for a budget.
+ * @param {string} id
+ * @param {number} offset - 1 = previous month/week, 2 = two back, etc.
+ */
+export const getBudgetHistory = async (id, offset) => {
+  const response = await axiosInstance.get(`/budgets/${id}/history`, {
+    params: { offset },
+  });
+  return response.data;
+};
+
+/**
  * Create a new budget.
  * @param {Object} budgetData - { category, isOverall, limitAmount, period, startDate, endDate, alertThreshold }
  */

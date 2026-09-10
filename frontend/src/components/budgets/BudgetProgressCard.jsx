@@ -1,6 +1,8 @@
-import React from 'react';
-import { FiTrash2, FiPause, FiPlay, FiAlertTriangle } from 'react-icons/fi';
+import React, { useState } from 'react';
+import { FiTrash2, FiPause, FiPlay, FiAlertTriangle, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { formatCurrency } from '../../utils/formatters';
+import * as budgetAPI from '../../api/budgetAPI';
+import toast from 'react-hot-toast';
 
 /**
  * Shows a single budget's live progress: category/overall label,
@@ -8,6 +10,10 @@ import { formatCurrency } from '../../utils/formatters';
  * (pause/resume, delete). Color shifts from green -> amber -> red
  * as percentUsed climbs, matching the same visual language as the
  * Calendar heatmap's spend-intensity colors.
+ *
+ * Also supports stepping back through past periods (Previous/Next
+ * arrows) for monthly/weekly budgets — custom-range budgets have no
+ * history to navigate, so the arrows are hidden for those.
  *
  * @param {Object} budget - status object as returned by getBudgets()/
  *   getBudgetStatus(): { budgetId, category, isOverall, period,
@@ -18,7 +24,39 @@ import { formatCurrency } from '../../utils/formatters';
  * @param {Function} onDelete - (budgetId) => void
  * @param {boolean} [isActive=true] - whether this budget is currently active
  */
-const BudgetProgressCard = ({ budget, currency, onToggleActive, onDelete, isActive = true }) => {
+const BudgetProgressCard = ({ budget: liveBudget, currency, onToggleActive, onDelete, isActive = true }) => {
+  const [offset, setOffset] = useState(0); // 0 = current/live period
+  const [historyBudget, setHistoryBudget] = useState(null);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  // When offset is 0, show the live data passed in via props (unchanged
+  // behavior). When offset > 0, show the fetched historical snapshot instead.
+  const budget = offset === 0 ? liveBudget : historyBudget;
+
+  const canNavigateHistory = liveBudget.period !== 'custom';
+
+  const fetchOffset = async (nextOffset) => {
+    if (nextOffset === 0) {
+      setOffset(0);
+      setHistoryBudget(null);
+      return;
+    }
+    setLoadingHistory(true);
+    try {
+      const data = await budgetAPI.getBudgetHistory(liveBudget.budgetId, nextOffset);
+      setHistoryBudget(data.budget);
+      setOffset(nextOffset);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to load budget history');
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  if (!budget) {
+    return null;
+  }
+
   const {
     budgetId,
     category,
@@ -45,40 +83,74 @@ const BudgetProgressCard = ({ budget, currency, onToggleActive, onDelete, isActi
   // no need for the bar itself to overflow its container.
   const barWidth = Math.min(percentUsed, 100);
 
-  const periodLabel = period === 'monthly' ? 'This month' : period === 'weekly' ? 'This week' : 'Custom period';
+  const basePeriodLabel = period === 'monthly' ? 'month' : period === 'weekly' ? 'week' : 'Custom period';
+  const periodLabel =
+    period === 'custom'
+      ? 'Custom period'
+      : offset === 0
+      ? `This ${basePeriodLabel}`
+      : offset === 1
+      ? `Last ${basePeriodLabel}`
+      : `${offset} ${basePeriodLabel}s ago`;
 
   return (
     <div className="card" style={{ padding: '18px', opacity: isActive ? 1 : 0.6 }}>
       <div className="flex-between" style={{ marginBottom: '10px', gap: '8px' }}>
         <div>
           <p style={{ fontSize: '15px', fontWeight: 700 }}>{label}</p>
-          <p style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>{periodLabel}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {canNavigateHistory && (
+              <button
+                onClick={() => fetchOffset(offset + 1)}
+                disabled={loadingHistory}
+                title="View previous period"
+                style={{ display: 'flex', alignItems: 'center', color: 'var(--color-text-secondary)', padding: '2px' }}
+              >
+                <FiChevronLeft size={13} />
+              </button>
+            )}
+            <p style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>{periodLabel}</p>
+            {canNavigateHistory && offset > 0 && (
+              <button
+                onClick={() => fetchOffset(offset - 1)}
+                disabled={loadingHistory}
+                title="View next period"
+                style={{ display: 'flex', alignItems: 'center', color: 'var(--color-text-secondary)', padding: '2px' }}
+              >
+                <FiChevronRight size={13} />
+              </button>
+            )}
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '6px' }}>
-          <button
-            onClick={() => onToggleActive(budgetId, !isActive)}
-            title={isActive ? 'Pause this budget' : 'Resume this budget'}
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: 30, height: 30, borderRadius: 'var(--radius-sm)',
-              border: '1px solid var(--color-border)', color: 'var(--color-text-secondary)',
-            }}
-          >
-            {isActive ? <FiPause size={14} /> : <FiPlay size={14} />}
-          </button>
-          <button
-            onClick={() => onDelete(budgetId)}
-            title="Delete this budget"
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: 30, height: 30, borderRadius: 'var(--radius-sm)',
-              border: '1px solid var(--color-border)', color: 'var(--color-danger)',
-            }}
-          >
-            <FiTrash2 size={14} />
-          </button>
-        </div>
+        {/* Pause/Resume and Delete only make sense for the live period,
+            not while viewing history — hide them when offset > 0 */}
+        {offset === 0 && (
+          <div style={{ display: 'flex', gap: '6px' }}>
+            <button
+              onClick={() => onToggleActive(budgetId, !isActive)}
+              title={isActive ? 'Pause this budget' : 'Resume this budget'}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: 30, height: 30, borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--color-border)', color: 'var(--color-text-secondary)',
+              }}
+            >
+              {isActive ? <FiPause size={14} /> : <FiPlay size={14} />}
+            </button>
+            <button
+              onClick={() => onDelete(budgetId)}
+              title="Delete this budget"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: 30, height: 30, borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--color-border)', color: 'var(--color-danger)',
+              }}
+            >
+              <FiTrash2 size={14} />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Progress bar */}
@@ -90,6 +162,7 @@ const BudgetProgressCard = ({ budget, currency, onToggleActive, onDelete, isActi
           backgroundColor: 'var(--color-surface-hover)',
           overflow: 'hidden',
           marginBottom: '8px',
+          opacity: loadingHistory ? 0.5 : 1,
         }}
       >
         <div
@@ -118,7 +191,7 @@ const BudgetProgressCard = ({ budget, currency, onToggleActive, onDelete, isActi
           : `${formatCurrency(Math.abs(remaining), currency)} over budget`}
       </p>
 
-      {(thresholdCrossed || limitExceeded) && (
+      {(thresholdCrossed || limitExceeded) && offset === 0 && (
         <div
           style={{
             display: 'flex', alignItems: 'center', gap: '6px',

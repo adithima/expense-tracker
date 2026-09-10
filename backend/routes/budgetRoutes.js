@@ -5,6 +5,7 @@ const {
   createBudget,
   getBudgets,
   getBudgetStatus,
+  getBudgetHistory,
   updateBudget,
   deleteBudget,
 } = require('../controllers/budgetController');
@@ -27,6 +28,15 @@ router.post('/', createBudget);
  * @access  Private
  */
 router.get('/', getBudgets);
+
+/**
+ * @route   GET /api/budgets/:id/history
+ * @desc    Get a PAST period's spend for a budget (?offset=1 = last month/week)
+ * @access  Private
+ * NOTE: This must come BEFORE '/:id' below, otherwise Express would try
+ * to match "history" as if it were a budget ID and fail.
+ */
+router.get('/:id/history', getBudgetHistory);
 
 /**
  * @route   GET /api/budgets/:id
