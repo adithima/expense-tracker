@@ -12,10 +12,6 @@ const CATEGORY_OPTIONS = [
   'Shopping', 'Travel', 'Food & Dining', 'Healthcare', 'Bills',
   'Entertainment', 'Groceries', 'Transport', 'Rent', 'Other',
 ];
-// NOTE: Transaction.category is free-text, not an enum — this list is
-// just a convenience starting set for the dropdown. Swap in a real
-// getDistinctCategories() call (see working notes) once that helper
-// exists, so it reflects the categories the user has actually used.
 
 const emptyForm = {
   isOverall: false,
@@ -40,7 +36,8 @@ const Budgets = () => {
   const fetchBudgets = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await budgetAPI.getBudgets(true); // active only
+      // FIXED: pass false to get ALL budgets, including paused ones
+      const data = await budgetAPI.getBudgets(false);
       setBudgets(data.budgets || []);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to load budgets');
@@ -158,7 +155,8 @@ const Budgets = () => {
               key={b.budgetId}
               budget={b}
               currency={currency}
-              isActive={true}
+              // FIXED: reflect the budget's real active/paused state
+              isActive={b.isActive}
               onToggleActive={handleToggleActive}
               onDelete={handleDelete}
             />
