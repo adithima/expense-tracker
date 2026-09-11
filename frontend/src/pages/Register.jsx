@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiUser, FiMail, FiAtSign, FiLock, FiEye, FiEyeOff, FiTrendingUp } from 'react-icons/fi';
+import { FiUser, FiMail, FiAtSign, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import {
   validateName,
@@ -80,20 +80,14 @@ const Register = () => {
     >
       <div className="card" style={{ width: '100%', maxWidth: '440px', padding: '36px 32px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '28px' }}>
-          <div
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: 'var(--radius-md)',
-              backgroundColor: 'var(--color-primary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '14px',
-            }}
-          >
-            <FiTrendingUp size={24} color="#fff" />
-          </div>
+          <svg width="56" height="56" viewBox="0 0 140 140" style={{ marginBottom: '14px' }}>
+            <rect width="140" height="140" rx="30" fill="#1b2a4a" />
+            <rect x="30" y="75" width="16" height="46" rx="3" fill="#FFFFFF" />
+            <rect x="52" y="58" width="16" height="63" rx="3" fill="#F5D68C" />
+            <rect x="74" y="40" width="16" height="81" rx="3" fill="#E8B94A" />
+            <path d="M44 98 L60 75 L78 88 L106 52" fill="none" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M92 46 L110 49 L105 67" fill="none" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
           <h1 style={{ fontSize: '22px', fontWeight: 800 }}>Create your account</h1>
           <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
             Start tracking your finances today

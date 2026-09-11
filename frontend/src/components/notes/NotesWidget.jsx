@@ -5,12 +5,14 @@ import ConfirmDialog from '../common/ConfirmDialog';
 import Spinner from '../common/Spinner';
 
 const EMOJI_GROUPS = {
-  Smileys: ['😀', '😁', '😂', '🤣', '😊', '😍', '🥰', '😘', '😎', '🤩', '🙂', '😉', '😢', '😭', '😡', '🥺', '😴', '🤔', '😅', '🙃', '😇', '🥳', '😜', '🤗', '😬', '🙄', '😌', '😋', '🤯', '😱', '🥹', '😤', '🤒', '🤕', '🥴', '😵', '🤓', '🧐', '😏', '🤐'],
-  Gestures: ['👍', '👎', '👏', '🙌', '🙏', '💪', '✌️', '🤝', '👋', '🤞', '👌', '🤟', '🫶', '👊', '🤙', '💅', '🫡', '🤲', '🖐️', '✋'],
-  Money: ['💰', '💵', '💸', '🤑', '🏦', '💳', '📈', '📉', '🪙', '💹', '🧾', '💴', '💶', '💷', '🛍️', '🛒', '🏷️', '📊', '💎', '🎟️'],
-  Objects: ['📝', '📌', '📅', '⏰', '🎯', '✅', '❌', '⭐', '🔥', '💡', '📚', '🖊️', '📖', '🗓️', '⏳', '🔔', '🎒', '🧠', '🔑', '📎'],
-  Hearts: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '💕', '💯', '💗', '💓', '💞', '💖', '💘', '❣️', '💔', '🤎', '💟', '♥️'],
-  Food: ['🍕', '🍔', '🍟', '🌮', '🍣', '🍜', '☕', '🍩', '🍰', '🍿', '🥗', '🍎', '🍫', '🧋', '🍦', '🍪', '🥤', '🍱', '🍗', '🥪'],
+  Smileys: ['😀', '😁', '😂', '🤣', '😊', '😍', '🥰', '😘', '😎', '🤩', '🙂', '😉', '😢', '😭', '😡', '🥺', '😴', '🤔', '😅', '🙃', '😇', '🥳', '😜', '🤗', '😬', '🙄', '😌', '😋', '🤯', '😱', '🥹', '😤', '🤒', '🤕', '🥴', '😵', '🤓', '🧐', '😏', '🤐', '😶', '😐', '😑', '🤨', '😮', '😯', '😲', '🥱', '😪', '🤪'],
+  People: ['👧', '👦', '👩', '👨', '👵', '👴', '👶', '🧑', '👩‍💼', '👨‍💼', '👩‍🎓', '👨‍🎓', '🧕', '👳', '👮', '🕵️', '👩‍⚕️', '👨‍⚕️', '👩‍🍳', '👨‍🍳', '🧑‍💻', '👸', '🤴', '🧙', '🧑‍🎨', '💃', '🕺', '🚶', '🏃', '🧍', '👯', '🧑‍🤝‍🧑'],
+  Gestures: ['👍', '👎', '👏', '🙌', '🙏', '💪', '✌️', '🤝', '👋', '🤞', '👌', '🤟', '🫶', '👊', '🤙', '💅', '🫡', '🤲', '🖐️', '✋', '👆', '👇', '👈', '👉', '✊', '🖖', '🤌', '🫰'],
+  Money: ['💰', '💵', '💸', '🤑', '🏦', '💳', '📈', '📉', '🪙', '💹', '🧾', '💴', '💶', '💷', '🛍️', '🛒', '🏷️', '📊', '💎', '🎟️', '🏧', '💱', '🪪', '📇'],
+  Objects: ['📝', '📌', '📅', '⏰', '🎯', '✅', '❌', '⭐', '🔥', '💡', '📚', '🖊️', '📖', '🗓️', '⏳', '🔔', '🎒', '🧠', '🔑', '📎', '📁', '🗂️', '📋', '🧮', '📐', '✂️', '🔒'],
+  Hearts: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '💕', '💯', '💗', '💓', '💞', '💖', '💘', '❣️', '💔', '🤎', '💟', '♥️', '💝', '💫', '✨', '🌟'],
+  Food: ['🍕', '🍔', '🍟', '🌮', '🍣', '🍜', '☕', '🍩', '🍰', '🍿', '🥗', '🍎', '🍫', '🧋', '🍦', '🍧', '🍨', '🎂', '🍪', '🥤', '🍱', '🍗', '🥪', '🍇', '🍉', '🍓', '🥑', '🍳', '🍛', '🍭', '🍬', '🧁', '🍉', '🥭', '🍒'],
+  Animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🦄', '🐝', '🦋', '🐢', '🐬', '🐳'],
 };
 
 /**
@@ -43,11 +45,6 @@ const formatPinnedDate = (dateStr) => {
  * not the widget panel — so it can never be clipped by the panel's
  * overflow:hidden (used for the panel's rounded corners), and always
  * shows its full height (tabs + full emoji grid).
- *
- * NOTE: positioning math (openUpward / top / left) is UNCHANGED from
- * before — only PICKER_HEIGHT grew (280 -> 340) to fit more emoji rows
- * without needing to scroll as much, per request to keep the same
- * opening behavior.
  */
 const EmojiPicker = ({ anchorRect, onSelect, onClose }) => {
   const [activeGroup, setActiveGroup] = useState('Smileys');
@@ -76,10 +73,6 @@ const EmojiPicker = ({ anchorRect, onSelect, onClose }) => {
     ? anchorRect.top - PICKER_HEIGHT - 8
     : anchorRect.bottom + 8;
 
-  // Open to the RIGHT of the Inkwell panel instead of overlapping it,
-  // so the note editor + old notes list stay visible while picking an
-  // emoji. Falls back to left-anchored (old behavior) only if there
-  // genuinely isn't enough room on the right side of the screen.
   const panelRightEdge = document.querySelector('[data-inkwell-panel]')?.getBoundingClientRect()?.right;
   const spaceOnRight = panelRightEdge
     ? window.innerWidth - panelRightEdge
@@ -130,8 +123,8 @@ const EmojiPicker = ({ anchorRect, onSelect, onClose }) => {
               padding: '5px 9px',
               borderRadius: '999px',
               whiteSpace: 'nowrap',
-              backgroundColor: activeGroup === group ? '#ec4899' : '#fce7f3',
-              color: activeGroup === group ? '#fff' : '#9d174d',
+              backgroundColor: activeGroup === group ? '#2f5fa8' : '#e3edfb',
+              color: activeGroup === group ? '#fff' : '#1b2a4a',
             }}
           >
             {group}
@@ -158,7 +151,7 @@ const EmojiPicker = ({ anchorRect, onSelect, onClose }) => {
               borderRadius: '6px',
               lineHeight: 1,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#fce7f3')}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e3edfb')}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             {emoji}
@@ -177,7 +170,7 @@ const EmojiPicker = ({ anchorRect, onSelect, onClose }) => {
  * positioned div sitting BEHIND the textarea, with the textarea's own
  * background made transparent so the lines show through.
  */
-const RuledTextarea = ({ value, onChange, placeholder, textareaRef, pink }) => {
+const RuledTextarea = ({ value, onChange, placeholder, textareaRef, theme }) => {
   const LINE_HEIGHT = 26;
 
   return (
@@ -188,13 +181,13 @@ const RuledTextarea = ({ value, onChange, placeholder, textareaRef, pink }) => {
           position: 'absolute',
           inset: 0,
           borderRadius: 'var(--radius-sm)',
-          backgroundColor: pink.bgLight,
+          backgroundColor: theme.bgLight,
           backgroundImage: `repeating-linear-gradient(
             to bottom,
             transparent 0px,
             transparent ${LINE_HEIGHT - 1}px,
-            ${pink.line} ${LINE_HEIGHT - 1}px,
-            ${pink.line} ${LINE_HEIGHT}px
+            ${theme.line} ${LINE_HEIGHT - 1}px,
+            ${theme.line} ${LINE_HEIGHT}px
           )`,
           backgroundPosition: `0 ${10 + LINE_HEIGHT - 4}px`,
           pointerEvents: 'none',
@@ -212,9 +205,9 @@ const RuledTextarea = ({ value, onChange, placeholder, textareaRef, pink }) => {
           resize: 'vertical',
           padding: '10px 12px',
           borderRadius: 'var(--radius-sm)',
-          border: `1px solid ${pink.border}`,
+          border: `1px solid ${theme.border}`,
           backgroundColor: 'transparent',
-          color: pink.text,
+          color: theme.text,
           fontSize: '14px',
           fontFamily: 'inherit',
           lineHeight: `${LINE_HEIGHT}px`,
@@ -227,7 +220,7 @@ const RuledTextarea = ({ value, onChange, placeholder, textareaRef, pink }) => {
 
 /**
  * NotesWidget ("Inkwell")
- * A small pink, lined-notebook-style notepad panel that slides out from the sidebar.
+ * A small blue, lined-notebook-style notepad panel that slides out from the sidebar.
  * Hybrid: a note can optionally be pinned to ANY date (not just today) via
  * a date picker, or left freeform like a normal scratchpad — same list
  * either way, dated ones just show a date badge.
@@ -281,15 +274,9 @@ const NotesWidget = ({ isOpen, onClose }) => {
     setPinnedDate(note.date || null);
     setEmojiAnchorRect(null);
     setErrorMsg('');
-    // Scroll the editor into view since the note list can push it
-    // off-screen on smaller panel heights.
     textareaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
 
-  // Replaces the old today-only toggle: turning the pin ON defaults to
-  // today (still the common case), but the date input that appears lets
-  // it be changed to any past (or future) date, e.g. backdating a note
-  // written today about yesterday.
   const togglePin = () => {
     setPinnedDate((prev) => (prev ? null : getTodayLocal()));
   };
@@ -376,19 +363,20 @@ const NotesWidget = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const pink = {
-    bg: '#fbdbe9',
-    bgLight: '#fdeef4',
-    line: 'rgba(157, 23, 77, 0.20)',
-    border: '#f3aecb',
-    accent: '#db2777',
-    accentSoft: '#fce7f3',
-    text: '#831843',
-    textMuted: '#be4a80',
+  // Soft blue theme, matching the navy/gold Kharchup brand instead of the
+  // old pink notepad look. Panel background is a pale blue tint, with a
+  // deeper blue used for accents/buttons.
+  const theme = {
+    bg: '#e3edfb',
+    bgLight: '#f3f8fe',
+    line: 'rgba(27, 42, 74, 0.15)',
+    border: '#c3d9f5',
+    accent: '#2f5fa8',
+    accentSoft: '#dde9fb',
+    text: '#1b2a4a',
+    textMuted: '#5c7196',
   };
 
-  // Case-insensitive filter on note content. Search box only shows when
-  // there's at least one note, so it's not dead UI on an empty list.
   const filteredNotes = searchQuery.trim()
     ? notes.filter((n) => n.content.toLowerCase().includes(searchQuery.trim().toLowerCase()))
     : notes;
@@ -419,9 +407,9 @@ const NotesWidget = ({ isOpen, onClose }) => {
           flexDirection: 'column',
           borderRadius: 'var(--radius-lg)',
           overflow: 'hidden',
-          boxShadow: '0 10px 30px rgba(157, 23, 77, 0.25)',
-          border: `1px solid ${pink.border}`,
-          backgroundColor: pink.bg,
+          boxShadow: '0 10px 30px rgba(27, 42, 74, 0.25)',
+          border: `1px solid ${theme.border}`,
+          backgroundColor: theme.bg,
           animation: 'notesSlideIn 0.18s ease',
         }}
       >
@@ -430,13 +418,13 @@ const NotesWidget = ({ isOpen, onClose }) => {
           className="flex-between"
           style={{
             padding: '16px 18px',
-            borderBottom: `1px solid ${pink.border}`,
-            backgroundColor: pink.bg,
+            borderBottom: `1px solid ${theme.border}`,
+            backgroundColor: theme.bg,
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <FiFileText size={18} color={pink.accent} />
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: pink.text }}>Inkwell</h3>
+            <FiFileText size={18} color={theme.accent} />
+            <h3 style={{ fontSize: '16px', fontWeight: 700, color: theme.text }}>Inkwell</h3>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <button
@@ -444,9 +432,9 @@ const NotesWidget = ({ isOpen, onClose }) => {
               title="New note"
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                width: 30, height: 30, borderRadius: '50%', color: pink.accent,
+                width: 30, height: 30, borderRadius: '50%', color: theme.accent,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = pink.accentSoft)}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme.accentSoft)}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
               <FiPlus size={18} />
@@ -456,9 +444,9 @@ const NotesWidget = ({ isOpen, onClose }) => {
               title="Close"
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                width: 30, height: 30, borderRadius: '50%', color: pink.textMuted,
+                width: 30, height: 30, borderRadius: '50%', color: theme.textMuted,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = pink.accentSoft)}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme.accentSoft)}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
               <FiX size={18} />
@@ -467,9 +455,9 @@ const NotesWidget = ({ isOpen, onClose }) => {
         </div>
 
         {/* Editor */}
-        <div style={{ padding: '14px 18px', borderBottom: `1px solid ${pink.border}`, backgroundColor: pink.bg }}>
+        <div style={{ padding: '14px 18px', borderBottom: `1px solid ${theme.border}`, backgroundColor: theme.bg }}>
           {activeId && (
-            <p style={{ fontSize: '11px', fontWeight: 700, color: pink.textMuted, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, color: theme.textMuted, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
               Editing note
             </p>
           )}
@@ -479,10 +467,9 @@ const NotesWidget = ({ isOpen, onClose }) => {
             onChange={(e) => setContent(e.target.value)}
             placeholder="Write a note... 📝"
             textareaRef={textareaRef}
-            pink={pink}
+            theme={theme}
           />
 
-          {/* Pin toggle + date picker (backdate to any date, not just today) */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
             <button
               type="button"
@@ -496,9 +483,9 @@ const NotesWidget = ({ isOpen, onClose }) => {
                 borderRadius: '999px',
                 fontSize: '12px',
                 fontWeight: 700,
-                border: `1px solid ${pink.border}`,
-                backgroundColor: pinnedDate ? pink.accent : pink.bgLight,
-                color: pinnedDate ? '#fff' : pink.textMuted,
+                border: `1px solid ${theme.border}`,
+                backgroundColor: pinnedDate ? theme.accent : theme.bgLight,
+                color: pinnedDate ? '#fff' : theme.textMuted,
               }}
             >
               <FiCalendar size={12} />
@@ -515,9 +502,9 @@ const NotesWidget = ({ isOpen, onClose }) => {
                   fontSize: '12px',
                   padding: '4px 8px',
                   borderRadius: 'var(--radius-sm)',
-                  border: `1px solid ${pink.border}`,
-                  backgroundColor: pink.bgLight,
-                  color: pink.text,
+                  border: `1px solid ${theme.border}`,
+                  backgroundColor: theme.bgLight,
+                  color: theme.text,
                 }}
               />
             )}
@@ -541,9 +528,9 @@ const NotesWidget = ({ isOpen, onClose }) => {
                 justifyContent: 'center',
                 width: '42px',
                 borderRadius: 'var(--radius-sm)',
-                border: `1px solid ${pink.border}`,
-                backgroundColor: emojiAnchorRect ? pink.accentSoft : pink.bgLight,
-                color: pink.accent,
+                border: `1px solid ${theme.border}`,
+                backgroundColor: emojiAnchorRect ? theme.accentSoft : theme.bgLight,
+                color: theme.accent,
                 flexShrink: 0,
               }}
             >
@@ -564,7 +551,7 @@ const NotesWidget = ({ isOpen, onClose }) => {
                 fontSize: '14px',
                 fontWeight: 700,
                 color: '#fff',
-                backgroundColor: pink.accent,
+                backgroundColor: theme.accent,
                 opacity: saving || !content.trim() ? 0.6 : 1,
               }}
             >
@@ -575,7 +562,7 @@ const NotesWidget = ({ isOpen, onClose }) => {
         </div>
 
         {/* Old notes list */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '10px 10px', backgroundColor: pink.bg }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '10px 10px', backgroundColor: theme.bg }}>
           <div className="flex-between" style={{ padding: '4px 8px 8px' }}>
             <p
               style={{
@@ -583,7 +570,7 @@ const NotesWidget = ({ isOpen, onClose }) => {
                 fontWeight: 700,
                 letterSpacing: '0.05em',
                 textTransform: 'uppercase',
-                color: pink.textMuted,
+                color: theme.textMuted,
               }}
             >
               Old Notes
@@ -594,7 +581,7 @@ const NotesWidget = ({ isOpen, onClose }) => {
             <div style={{ position: 'relative', margin: '0 4px 10px' }}>
               <FiSearch
                 size={13}
-                style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: pink.textMuted }}
+                style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: theme.textMuted }}
               />
               <input
                 type="text"
@@ -606,9 +593,9 @@ const NotesWidget = ({ isOpen, onClose }) => {
                   fontSize: '12px',
                   padding: '7px 10px 7px 30px',
                   borderRadius: '999px',
-                  border: `1px solid ${pink.border}`,
-                  backgroundColor: pink.bgLight,
-                  color: pink.text,
+                  border: `1px solid ${theme.border}`,
+                  backgroundColor: theme.bgLight,
+                  color: theme.text,
                   outline: 'none',
                 }}
               />
@@ -620,11 +607,11 @@ const NotesWidget = ({ isOpen, onClose }) => {
               <Spinner />
             </div>
           ) : notes.length === 0 ? (
-            <p style={{ fontSize: '13px', color: pink.textMuted, padding: '0 8px' }}>
+            <p style={{ fontSize: '13px', color: theme.textMuted, padding: '0 8px' }}>
               No notes yet. Write your first one above. 💭
             </p>
           ) : filteredNotes.length === 0 ? (
-            <p style={{ fontSize: '13px', color: pink.textMuted, padding: '0 8px' }}>
+            <p style={{ fontSize: '13px', color: theme.textMuted, padding: '0 8px' }}>
               No notes match "{searchQuery}"
             </p>
           ) : (
@@ -642,21 +629,21 @@ const NotesWidget = ({ isOpen, onClose }) => {
                     padding: '10px',
                     borderRadius: 'var(--radius-sm)',
                     cursor: 'pointer',
-                    backgroundColor: activeId === note._id ? pink.accentSoft : pink.bgLight,
-                    border: `1px solid ${activeId === note._id ? pink.accent : 'transparent'}`,
+                    backgroundColor: activeId === note._id ? theme.accentSoft : theme.bgLight,
+                    border: `1px solid ${activeId === note._id ? theme.accent : 'transparent'}`,
                   }}
                   onMouseEnter={(e) => {
                     if (activeId !== note._id) e.currentTarget.style.backgroundColor = '#fff';
                   }}
                   onMouseLeave={(e) => {
-                    if (activeId !== note._id) e.currentTarget.style.backgroundColor = pink.bgLight;
+                    if (activeId !== note._id) e.currentTarget.style.backgroundColor = theme.bgLight;
                   }}
                 >
                   <div style={{ minWidth: 0, flex: 1 }}>
                     <p
                       style={{
                         fontSize: '13px',
-                        color: pink.text,
+                        color: theme.text,
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -665,7 +652,7 @@ const NotesWidget = ({ isOpen, onClose }) => {
                       {note.content}
                     </p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-                      <p style={{ fontSize: '11px', color: pink.textMuted }}>
+                      <p style={{ fontSize: '11px', color: theme.textMuted }}>
                         {formatTime(note.updatedAt)}
                       </p>
                       {note.date && (
@@ -678,7 +665,7 @@ const NotesWidget = ({ isOpen, onClose }) => {
                             fontWeight: 700,
                             padding: '1px 6px',
                             borderRadius: '999px',
-                            backgroundColor: pink.accent,
+                            backgroundColor: theme.accent,
                             color: '#fff',
                           }}
                         >
@@ -703,15 +690,15 @@ const NotesWidget = ({ isOpen, onClose }) => {
                         width: 26,
                         height: 26,
                         borderRadius: '50%',
-                        color: pink.textMuted,
+                        color: theme.textMuted,
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = pink.accentSoft;
-                        e.currentTarget.style.color = pink.accent;
+                        e.currentTarget.style.backgroundColor = theme.accentSoft;
+                        e.currentTarget.style.color = theme.accent;
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = pink.textMuted;
+                        e.currentTarget.style.color = theme.textMuted;
                       }}
                     >
                       <FiEdit2 size={13} />
@@ -729,7 +716,7 @@ const NotesWidget = ({ isOpen, onClose }) => {
                         width: 26,
                         height: 26,
                         borderRadius: '50%',
-                        color: pink.textMuted,
+                        color: theme.textMuted,
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = '#fecdd3';
@@ -737,7 +724,7 @@ const NotesWidget = ({ isOpen, onClose }) => {
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = pink.textMuted;
+                        e.currentTarget.style.color = theme.textMuted;
                       }}
                     >
                       <FiTrash2 size={14} />
