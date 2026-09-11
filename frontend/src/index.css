@@ -1,5 +1,5 @@
 /* ===================================================
-   Expense Tracker - Global Design System
+   Kharchup - Global Design System
    Defines CSS variables for Light/Dark mode theming,
    base resets, typography, and reusable utility classes.
 =================================================== */
@@ -16,9 +16,13 @@
   --color-text-secondary: #5c6178;
   --color-text-muted: #9198ac;
 
-  --color-primary: #6366f1;
-  --color-primary-hover: #4f52d6;
-  --color-primary-light: #eef0ff;
+  /* Navy & Gold brand palette */
+  --color-navy: #1b2a4a;
+  --color-navy-light: #2a3d63;
+
+  --color-primary: #d9a730;
+  --color-primary-hover: #c1920f;
+  --color-primary-light: #fbf1dc;
 
   --color-success: #10b981;
   --color-success-light: #e6f9f2;
@@ -57,9 +61,12 @@
   --color-text-secondary: #a8adc0;
   --color-text-muted: #6b7086;
 
-  --color-primary: #818cf8;
-  --color-primary-hover: #a5b0fb;
-  --color-primary-light: #262a45;
+  --color-navy: #0f1830;
+  --color-navy-light: #1b2a4a;
+
+  --color-primary: #e8b94a;
+  --color-primary-hover: #f5d68c;
+  --color-primary-light: #3a2f10;
 
   --color-success: #34d399;
   --color-success-light: #10331f;
@@ -206,7 +213,7 @@ img {
 
 .btn-primary {
   background-color: var(--color-primary);
-  color: #ffffff;
+  color: #1b2a4a;
 }
 
 .btn-primary:hover {

@@ -10,26 +10,26 @@ const Sidebar = ({ isOpen, onClose }) => {
   const linkStyle = (path) => ({
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-    color: '#fff',
+    gap: '10px',
+    color: location.pathname === path ? '#e8b94a' : '#e9ecf3',
     textDecoration: 'none',
     padding: '10px 0',
-    fontSize: '18px',
-    fontWeight: location.pathname === path ? 'bold' : 'normal',
+    fontSize: '15px',
+    fontWeight: location.pathname === path ? 700 : 500,
   });
 
   const notesButtonStyle = {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
+    gap: '10px',
     width: '100%',
     background: 'none',
     border: 'none',
-    color: '#fff',
+    color: notesOpen ? '#e8b94a' : '#e9ecf3',
     textDecoration: 'none',
     padding: '10px 0',
-    fontSize: '18px',
-    fontWeight: notesOpen ? 'bold' : 'normal',
+    fontSize: '15px',
+    fontWeight: notesOpen ? 700 : 500,
     cursor: 'pointer',
     textAlign: 'left',
   };
@@ -38,13 +38,24 @@ const Sidebar = ({ isOpen, onClose }) => {
     <aside
       style={{
         width: '250px',
-        background: '#1f2937',
+        background: '#1b2a4a',
         color: '#fff',
         padding: '20px',
         minHeight: '100vh',
       }}
     >
-      <h2>Expense Tracker</h2>
+      {/* Kharchup logo mark */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+        <svg width="34" height="34" viewBox="0 0 140 140" style={{ flexShrink: 0 }}>
+          <rect width="140" height="140" rx="30" fill="#0f1830" />
+          <rect x="30" y="75" width="16" height="46" rx="3" fill="#FFFFFF" />
+          <rect x="52" y="58" width="16" height="63" rx="3" fill="#F5D68C" />
+          <rect x="74" y="40" width="16" height="81" rx="3" fill="#E8B94A" />
+          <path d="M44 98 L60 75 L78 88 L106 52" fill="none" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M92 46 L110 49 L105 67" fill="none" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#fff' }}>Kharchup</h2>
+      </div>
 
       <nav style={{ marginTop: '30px' }}>
         <Link to="/dashboard" style={linkStyle('/dashboard')}>
@@ -87,6 +98,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             marginTop: '20px',
             padding: '8px 12px',
             cursor: 'pointer',
+            color: '#fff',
           }}
         >
           Close
