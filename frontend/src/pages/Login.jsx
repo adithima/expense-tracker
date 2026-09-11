@@ -4,11 +4,6 @@ import { FiUser, FiLock, FiEye, FiEyeOff, FiTrendingUp } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { validatePassword, runValidation } from '../utils/validators';
 
-/**
- * Login Page
- * Accepts either an email address OR a username in a single field.
- * Backend figures out which one was entered.
- */
 const Login = () => {
   const { login, authLoading } = useAuth();
   const navigate = useNavigate();
@@ -53,50 +48,39 @@ const Login = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #7f77dd 0%, #d4537e 55%, #ef9f27 100%)',
+        backgroundColor: 'var(--color-bg)',
         padding: '20px',
       }}
     >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '420px',
-          padding: '40px 34px',
-          borderRadius: '20px',
-          backgroundColor: '#ffffff',
-          boxShadow: '0 20px 60px rgba(83, 74, 183, 0.35)',
-        }}
-      >
+      <div className="card" style={{ width: '100%', maxWidth: '420px', padding: '36px 32px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '28px' }}>
           <div
             style={{
-              width: 56,
-              height: 56,
-              borderRadius: '16px',
-              background: 'linear-gradient(135deg, #7f77dd, #d4537e)',
+              width: 48,
+              height: 48,
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'var(--color-primary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: '16px',
+              marginBottom: '14px',
             }}
           >
-            <FiTrendingUp size={28} color="#fff" />
+            <FiTrendingUp size={24} color="#fff" />
           </div>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#26215c' }}>Welcome back</h1>
-          <p style={{ fontSize: '14px', color: '#5f5e5a', marginTop: '4px' }}>
+          <h1 style={{ fontSize: '22px', fontWeight: 800 }}>Welcome back</h1>
+          <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
             Log in to manage your finances
           </p>
         </div>
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
-            <label className="form-label" htmlFor="identifier" style={{ color: '#26215c', fontWeight: 600 }}>
-              Email or Username
-            </label>
+            <label className="form-label" htmlFor="identifier">Email or Username</label>
             <div style={{ position: 'relative' }}>
               <FiUser
                 size={16}
-                style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#a09ae0' }}
+                style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }}
               />
               <input
                 id="identifier"
@@ -106,11 +90,7 @@ const Login = () => {
                 onChange={handleChange}
                 placeholder="you@example.com or username"
                 className={`form-input ${errors.identifier ? 'input-error' : ''}`}
-                style={{
-                  paddingLeft: '40px',
-                  borderRadius: '12px',
-                  border: '2px solid #eeedfe',
-                }}
+                style={{ paddingLeft: '40px' }}
                 autoComplete="username"
               />
             </div>
@@ -118,13 +98,11 @@ const Login = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="password" style={{ color: '#26215c', fontWeight: 600 }}>
-              Password
-            </label>
+            <label className="form-label" htmlFor="password">Password</label>
             <div style={{ position: 'relative' }}>
               <FiLock
                 size={16}
-                style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#a09ae0' }}
+                style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }}
               />
               <input
                 id="password"
@@ -134,19 +112,14 @@ const Login = () => {
                 onChange={handleChange}
                 placeholder="Enter your password"
                 className={`form-input ${errors.password ? 'input-error' : ''}`}
-                style={{
-                  paddingLeft: '40px',
-                  paddingRight: '40px',
-                  borderRadius: '12px',
-                  border: '2px solid #eeedfe',
-                }}
+                style={{ paddingLeft: '40px', paddingRight: '40px' }}
                 autoComplete="current-password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
-                style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: '#a09ae0' }}
+                style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }}
               >
                 {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
               </button>
@@ -156,28 +129,17 @@ const Login = () => {
 
           <button
             type="submit"
+            className="btn btn-primary btn-block"
             disabled={authLoading}
-            style={{
-              width: '100%',
-              marginTop: '10px',
-              padding: '14px',
-              borderRadius: '12px',
-              border: 'none',
-              background: 'linear-gradient(135deg, #7f77dd, #d4537e)',
-              color: '#fff',
-              fontWeight: 700,
-              fontSize: '15px',
-              cursor: authLoading ? 'default' : 'pointer',
-              opacity: authLoading ? 0.7 : 1,
-            }}
+            style={{ marginTop: '8px', padding: '12px' }}
           >
             {authLoading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', fontSize: '14px', color: '#5f5e5a', marginTop: '24px' }}>
+        <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--color-text-secondary)', marginTop: '24px' }}>
           Don't have an account?{' '}
-          <Link to="/register" style={{ color: '#d4537e', fontWeight: 700 }}>
+          <Link to="/register" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>
             Sign up
           </Link>
         </p>
