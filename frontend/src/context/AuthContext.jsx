@@ -39,10 +39,13 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, []);
 
-  const register = async (name, email, password) => {
+  // username is optional - existing callers that don't pass it
+  // (e.g. any old code still calling register(name, email, password))
+  // keep working exactly as before.
+  const register = async (name, email, password, username) => {
     setAuthLoading(true);
     try {
-      const data = await authAPI.registerUser({ name, email, password });
+      const data = await authAPI.registerUser({ name, email, password, username });
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setUser(data.user);
@@ -63,10 +66,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = async (email, password) => {
+  // Renamed param to `identifier` since it now accepts EITHER an email
+  // or a username - the backend figures out which one was entered.
+  const login = async (identifier, password) => {
     setAuthLoading(true);
     try {
-      const data = await authAPI.loginUser({ email, password });
+      const data = await authAPI.loginUser({ identifier, password });
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setUser(data.user);

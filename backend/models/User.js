@@ -25,6 +25,23 @@ const userSchema = new mongoose.Schema(
         'Please enter a valid email address',
       ],
     },
+    // Optional alternative identifier for login. Not required, so
+    // existing accounts created before this field existed keep working
+    // exactly as before, logging in with email only. sparse:true means
+    // the unique constraint only applies to documents that actually
+    // HAVE a username set — multiple users with no username (null)
+    // won't collide with each other.
+    username: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      minlength: [3, 'Username must be at least 3 characters long'],
+      maxlength: [20, 'Username cannot exceed 20 characters'],
+      match: [/^[a-z0-9_]+$/, 'Username can only contain lowercase letters, numbers, and underscores'],
+      unique: true,
+      sparse: true,
+      default: undefined,
+    },
     password: {
       type: String,
       required: [true, 'Password is required'],
@@ -91,6 +108,7 @@ userSchema.methods.toSafeObject = function () {
     id: this._id,
     name: this.name,
     email: this.email,
+    username: this.username || null,
     avatar: this.avatar,
     currency: this.currency,
     budgetAlertsEnabled: this.budgetAlertsEnabled,
