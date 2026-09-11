@@ -23,6 +23,8 @@ const validate = (req, res, next) => {
 
 /**
  * Validation rules for user registration.
+ * `username` is optional — if provided, it must match the same
+ * format rules as the User schema (3-20 chars, letters/numbers/underscore).
  */
 const registerValidationRules = [
   body('name')
@@ -38,6 +40,13 @@ const registerValidationRules = [
     .isEmail()
     .withMessage('Please provide a valid email address')
     .normalizeEmail(),
+  body('username')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isLength({ min: 3, max: 20 })
+    .withMessage('Username must be between 3 and 20 characters')
+    .matches(/^[a-zA-Z0-9_]+$/)
+    .withMessage('Username can only contain letters, numbers, and underscores'),
   body('password')
     .notEmpty()
     .withMessage('Password is required')
@@ -47,15 +56,15 @@ const registerValidationRules = [
 
 /**
  * Validation rules for user login.
+ * Accepts EITHER an email or a username in the `identifier` field —
+ * so it's just checked as a non-empty string, not forced into email
+ * format. The controller itself figures out which one was entered.
  */
 const loginValidationRules = [
-  body('email')
+  body('identifier')
     .trim()
     .notEmpty()
-    .withMessage('Email is required')
-    .isEmail()
-    .withMessage('Please provide a valid email address')
-    .normalizeEmail(),
+    .withMessage('Enter your email or username'),
   body('password').notEmpty().withMessage('Password is required'),
 ];
 
