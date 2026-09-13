@@ -5,27 +5,38 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import * as notificationAPI from '../../api/notificationAPI';
 
+const LOGO_MARK = (
+  <svg width="28" height="28" viewBox="0 0 140 140" style={{ flexShrink: 0 }}>
+    <rect width="140" height="140" rx="30" fill="#1b2a4a" />
+    <rect x="30" y="75" width="16" height="46" rx="3" fill="#FFFFFF" />
+    <rect x="52" y="58" width="16" height="63" rx="3" fill="#F5D68C" />
+    <rect x="74" y="40" width="16" height="81" rx="3" fill="#E8B94A" />
+    <path d="M44 98 L60 75 L78 88 L106 52" fill="none" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M92 46 L110 49 L105 67" fill="none" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 /**
  * Top navigation bar.
- * Contains: mobile sidebar toggle, app title, notification bell,
- * dark/light mode toggle, and a user profile dropdown menu.
+ * Shows the hamburger + Kharchup logo on the left ONLY while the
+ * sidebar is collapsed — once expanded, that same logo/hamburger
+ * lives inside the sidebar itself, so this hides to avoid duplication.
  *
- * @param {function} onMenuClick - toggles the mobile sidebar (passed from Layout)
+ * @param {boolean} sidebarCollapsed
+ * @param {function} onToggleSidebar
  */
-const Navbar = ({ onMenuClick }) => {
+const Navbar = ({ sidebarCollapsed, onToggleSidebar }) => {
   const { user, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Notification bell state
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const notifRef = useRef(null);
 
-  // Close either dropdown when clicking outside of it
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -39,15 +50,12 @@ const Navbar = ({ onMenuClick }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Poll unread count every 30s so the badge stays roughly current
-  // even if the user never opens the dropdown. Cheap call by design
-  // (see notificationController.getUnreadCount) so this is safe to poll.
   const fetchUnreadCount = useCallback(async () => {
     try {
       const data = await notificationAPI.getUnreadCount();
       setUnreadCount(data.count || 0);
     } catch {
-      // Silent — badge just won't update this cycle, not worth a toast
+      // Silent
     }
   }, []);
 
@@ -57,8 +65,6 @@ const Navbar = ({ onMenuClick }) => {
     return () => clearInterval(interval);
   }, [fetchUnreadCount]);
 
-  // Fetch the full list only when the dropdown is actually opened —
-  // no need to hold the full notification bodies in memory otherwise.
   const handleBellClick = async () => {
     const opening = !notifOpen;
     setNotifOpen(opening);
@@ -69,7 +75,7 @@ const Navbar = ({ onMenuClick }) => {
         const data = await notificationAPI.getNotifications({ limit: 10 });
         setNotifications(data.notifications || []);
       } catch {
-        // Silent — dropdown just shows empty state
+        // Silent
       }
     }
   };
@@ -145,20 +151,33 @@ const Navbar = ({ onMenuClick }) => {
         zIndex: 100,
       }}
     >
-      <div className="flex" style={{ alignItems: 'center', gap: '16px' }}>
-        <button
-          onClick={onMenuClick}
-          aria-label="Toggle menu"
-          className="mobile-menu-btn"
-          style={{
-            display: 'none',
-            padding: '8px',
-            borderRadius: 'var(--radius-md)',
-            color: 'var(--color-text-primary)',
-          }}
-        >
-          <FiMenu size={22} />
-        </button>
+      <div className="flex" style={{ alignItems: 'center', gap: '12px' }}>
+        {sidebarCollapsed && (
+          <>
+            <button
+              onClick={onToggleSidebar}
+              aria-label="Expand sidebar"
+              title="Expand sidebar"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 36,
+                height: 36,
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--color-text-primary)',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-surface-hover)')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+            >
+              <FiMenu size={20} />
+            </button>
+            {LOGO_MARK}
+            <span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+              Kharchup
+            </span>
+          </>
+        )}
       </div>
 
       <div className="flex" style={{ alignItems: 'center', gap: '12px' }}>
@@ -343,7 +362,7 @@ const Navbar = ({ onMenuClick }) => {
                 height: 32,
                 borderRadius: '50%',
                 backgroundColor: 'var(--color-primary)',
-                color: '#fff',
+                color: '#1b2a4a',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -430,7 +449,6 @@ const Navbar = ({ onMenuClick }) => {
       <style>
         {`
           @media (max-width: 900px) {
-            .mobile-menu-btn { display: flex !important; align-items: center; justify-content: center; }
             .hide-on-mobile { display: none; }
           }
         `}

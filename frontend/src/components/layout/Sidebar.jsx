@@ -22,11 +22,10 @@ const LOGO_MARK = (
 );
 
 /**
- * Collapsible sidebar. When collapsed, shows a slim icon-only rail
- * (hamburger + logo mark + nav icons, no text). Clicking the hamburger
- * expands it to show the full "Kharchup" wordmark and text labels.
- * Collapsed state is controlled by the parent Layout so the width can
- * be coordinated with NotesWidget's positioning.
+ * Collapsed: a slim icon-only rail, no logo/hamburger of its own —
+ * those live in the top Navbar instead while collapsed.
+ * Expanded: full sidebar with its OWN hamburger + logo + wordmark at
+ * the top (so the Navbar's copy hides once expanded, avoiding duplication).
  */
 const Sidebar = ({ collapsed, onToggle }) => {
   const location = useLocation();
@@ -75,51 +74,29 @@ const Sidebar = ({ collapsed, onToggle }) => {
         overflow: 'hidden',
       }}
     >
-      {/* Top row: hamburger + logo (+ wordmark when expanded) */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          marginBottom: collapsed ? '20px' : '6px',
-          justifyContent: collapsed ? 'center' : 'flex-start',
-        }}
-      >
-        <button
-          onClick={onToggle}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 34,
-            height: 34,
-            borderRadius: '8px',
-            color: '#fff',
-            flexShrink: 0,
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-        >
-          <FiMenu size={20} />
-        </button>
-
-        {!collapsed && (
-          <>
-            {LOGO_MARK}
-            <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#fff', whiteSpace: 'nowrap' }}>Kharchup</h2>
-          </>
-        )}
-      </div>
-
-      {collapsed && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+      {/* Sidebar's OWN hamburger + logo + wordmark — only shown when
+          expanded. While collapsed, the Navbar shows these instead. */}
+      {!collapsed && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+          <button
+            onClick={onToggle}
+            aria-label="Collapse sidebar"
+            title="Collapse sidebar"
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: 34, height: 34, borderRadius: '8px', color: '#fff', flexShrink: 0,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+          >
+            <FiMenu size={20} />
+          </button>
           {LOGO_MARK}
+          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#fff', whiteSpace: 'nowrap' }}>Kharchup</h2>
         </div>
       )}
 
-      <nav style={{ marginTop: collapsed ? '10px' : '24px' }}>
+      <nav style={{ marginTop: collapsed ? '8px' : '24px' }}>
         {NAV_ITEMS.map(({ path, icon: Icon, label }) => (
           <Link key={path} to={path} style={linkStyle(path)} title={collapsed ? label : undefined}>
             <Icon size={18} />
