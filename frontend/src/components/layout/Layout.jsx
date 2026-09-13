@@ -4,19 +4,18 @@ import Navbar from './Navbar';
 
 /**
  * Main app shell layout used by all protected/authenticated pages.
- * Combines the Sidebar and Navbar around the routed page content.
- * Manages mobile sidebar open/close state, shared between Navbar
- * (which triggers it) and Sidebar (which displays/closes it).
+ * Manages the collapsed/expanded state of the sidebar — starts
+ * collapsed (icon rail only), expands when the hamburger is clicked.
  */
 const Layout = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed((prev) => !prev)} />
 
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-        <Navbar onMenuClick={() => setSidebarOpen((prev) => !prev)} />
+        <Navbar />
 
         <main
           style={{
