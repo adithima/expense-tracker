@@ -1,31 +1,17 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { FiMenu, FiSun, FiMoon, FiChevronDown, FiUser, FiLogOut, FiBell, FiCheck, FiTrash2 } from 'react-icons/fi';
+import { FiSun, FiMoon, FiChevronDown, FiUser, FiLogOut, FiBell, FiCheck, FiTrash2 } from 'react-icons/fi';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import * as notificationAPI from '../../api/notificationAPI';
 
-const LOGO_MARK = (
-  <svg width="28" height="28" viewBox="0 0 140 140" style={{ flexShrink: 0 }}>
-    <rect width="140" height="140" rx="30" fill="#1b2a4a" />
-    <rect x="30" y="75" width="16" height="46" rx="3" fill="#FFFFFF" />
-    <rect x="52" y="58" width="16" height="63" rx="3" fill="#F5D68C" />
-    <rect x="74" y="40" width="16" height="81" rx="3" fill="#E8B94A" />
-    <path d="M44 98 L60 75 L78 88 L106 52" fill="none" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M92 46 L110 49 L105 67" fill="none" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
 /**
  * Top navigation bar.
- * Shows the hamburger + Kharchup logo on the left ONLY while the
- * sidebar is collapsed — once expanded, that same logo/hamburger
- * lives inside the sidebar itself, so this hides to avoid duplication.
- *
- * @param {boolean} sidebarCollapsed
- * @param {function} onToggleSidebar
+ * Contains: notification bell, dark/light mode toggle, and a user
+ * profile dropdown menu. The sidebar toggle/logo live permanently
+ * in the Sidebar component itself, not here.
  */
-const Navbar = ({ sidebarCollapsed, onToggleSidebar }) => {
+const Navbar = () => {
   const { user, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -144,42 +130,13 @@ const Navbar = ({ sidebarCollapsed, onToggleSidebar }) => {
         borderBottom: '1px solid var(--color-border)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         padding: '0 24px',
         position: 'sticky',
         top: 0,
         zIndex: 100,
       }}
     >
-      <div className="flex" style={{ alignItems: 'center', gap: '12px' }}>
-        {sidebarCollapsed && (
-          <>
-            <button
-              onClick={onToggleSidebar}
-              aria-label="Expand sidebar"
-              title="Expand sidebar"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 36,
-                height: 36,
-                borderRadius: 'var(--radius-md)',
-                color: 'var(--color-text-primary)',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-surface-hover)')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-            >
-              <FiMenu size={20} />
-            </button>
-            {LOGO_MARK}
-            <span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--color-text-primary)' }}>
-              Kharchup
-            </span>
-          </>
-        )}
-      </div>
-
       <div className="flex" style={{ alignItems: 'center', gap: '12px' }}>
         {/* Notification bell */}
         <div ref={notifRef} style={{ position: 'relative' }}>
