@@ -21,12 +21,6 @@ const LOGO_MARK = (
   </svg>
 );
 
-/**
- * Collapsed: a slim icon-only rail, no logo/hamburger of its own —
- * those live in the top Navbar instead while collapsed.
- * Expanded: full sidebar with its OWN hamburger + logo + wordmark at
- * the top (so the Navbar's copy hides once expanded, avoiding duplication).
- */
 const Sidebar = ({ collapsed, onToggle }) => {
   const location = useLocation();
   const [notesOpen, setNotesOpen] = useState(false);
@@ -74,8 +68,6 @@ const Sidebar = ({ collapsed, onToggle }) => {
         overflow: 'hidden',
       }}
     >
-      {/* Sidebar's OWN hamburger + logo + wordmark — only shown when
-          expanded. While collapsed, the Navbar shows these instead. */}
       {!collapsed && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
           <button
