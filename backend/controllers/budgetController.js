@@ -107,6 +107,7 @@ const computeBudgetStatus = async (budget, userId) => {
     budgetId: budget._id,
     category: budget.isOverall ? null : budget.category,
     isOverall: budget.isOverall,
+    isActive: budget.isActive,
     period: budget.period,
     periodStart: start,
     periodEnd: end,
