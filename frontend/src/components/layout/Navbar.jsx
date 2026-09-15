@@ -5,11 +5,22 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import * as notificationAPI from '../../api/notificationAPI';
 
+const LOGO_MARK = (
+  <svg width="26" height="26" viewBox="0 0 140 140" style={{ flexShrink: 0 }}>
+    <rect width="140" height="140" rx="30" fill="#1b2a4a" />
+    <rect x="30" y="75" width="16" height="46" rx="3" fill="#FFFFFF" />
+    <rect x="52" y="58" width="16" height="63" rx="3" fill="#F5D68C" />
+    <rect x="74" y="40" width="16" height="81" rx="3" fill="#E8B94A" />
+    <path d="M44 98 L60 75 L78 88 L106 52" fill="none" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M92 46 L110 49 L105 67" fill="none" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 /**
  * Top navigation bar.
- * Contains: notification bell, dark/light mode toggle, and a user
- * profile dropdown menu. The sidebar toggle/logo live permanently
- * in the Sidebar component itself, not here.
+ * Shows the Kharchup logo + name on the left (always visible,
+ * independent of the sidebar's collapsed/expanded state), and
+ * notification bell, theme toggle, and user profile dropdown on the right.
  */
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -130,13 +141,20 @@ const Navbar = () => {
         borderBottom: '1px solid var(--color-border)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         padding: '0 24px',
         position: 'sticky',
         top: 0,
         zIndex: 100,
       }}
     >
+      <div className="flex" style={{ alignItems: 'center', gap: '10px' }}>
+        {LOGO_MARK}
+        <span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+          Kharchup
+        </span>
+      </div>
+
       <div className="flex" style={{ alignItems: 'center', gap: '12px' }}>
         {/* Notification bell */}
         <div ref={notifRef} style={{ position: 'relative' }}>
