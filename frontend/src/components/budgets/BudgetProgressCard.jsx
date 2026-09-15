@@ -96,8 +96,26 @@ const BudgetProgressCard = ({ budget: liveBudget, currency, onToggleActive, onDe
   return (
     <div className="card" style={{ padding: '18px', opacity: isActive ? 1 : 0.6 }}>
       <div className="flex-between" style={{ marginBottom: '10px', gap: '8px' }}>
-        <div>
-          <p style={{ fontSize: '15px', fontWeight: 700 }}>{label}</p>
+         <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <p style={{ fontSize: '15px', fontWeight: 700 }}>{label}</p>
+            {!isActive && offset === 0 && (
+              <span
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '999px',
+                  backgroundColor: 'var(--color-text-muted)',
+                  color: '#fff',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.03em',
+                }}
+              >
+                Paused
+              </span>
+            )}
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             {canNavigateHistory && (
               <button
