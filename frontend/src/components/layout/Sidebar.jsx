@@ -10,22 +10,10 @@ const NAV_ITEMS = [
   { path: '/calendar', icon: FiCalendar, label: 'Calendar' },
 ];
 
-const LOGO_MARK = (
-  <svg width="30" height="30" viewBox="0 0 140 140" style={{ flexShrink: 0 }}>
-    <rect width="140" height="140" rx="30" fill="#0f1830" />
-    <rect x="30" y="75" width="16" height="46" rx="3" fill="#FFFFFF" />
-    <rect x="52" y="58" width="16" height="63" rx="3" fill="#F5D68C" />
-    <rect x="74" y="40" width="16" height="81" rx="3" fill="#E8B94A" />
-    <path d="M44 98 L60 75 L78 88 L106 52" fill="none" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M92 46 L110 49 L105 67" fill="none" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
 /**
- * Collapsed: a slim icon-only rail, no logo/hamburger of its own —
- * those live in the top Navbar instead while collapsed.
- * Expanded: full sidebar with its OWN hamburger + logo + wordmark at
- * the top (so the Navbar's copy hides once expanded, avoiding duplication).
+ * Collapsible sidebar. Only shows a hamburger toggle at the top —
+ * the Kharchup logo/wordmark lives permanently in the top Navbar
+ * instead, so it isn't duplicated here.
  */
 const Sidebar = ({ collapsed, onToggle }) => {
   const location = useLocation();
@@ -74,13 +62,11 @@ const Sidebar = ({ collapsed, onToggle }) => {
         overflow: 'hidden',
       }}
     >
-      {/* Sidebar's OWN hamburger + logo + wordmark — only shown when
-          expanded. While collapsed, the Navbar shows these instead. */}
-            <div
+      {/* Hamburger toggle only — logo lives in the Navbar now */}
+      <div
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '10px',
           marginBottom: '6px',
           justifyContent: collapsed ? 'center' : 'flex-start',
         }}
@@ -98,12 +84,6 @@ const Sidebar = ({ collapsed, onToggle }) => {
         >
           <FiMenu size={20} />
         </button>
-        {!collapsed && (
-          <>
-            {LOGO_MARK}
-            <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#fff', whiteSpace: 'nowrap' }}>Kharchup</h2>
-          </>
-        )}
       </div>
 
       <nav style={{ marginTop: collapsed ? '8px' : '24px' }}>
