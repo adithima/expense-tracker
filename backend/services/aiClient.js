@@ -1,11 +1,15 @@
 
 const { GoogleGenAI } = require('@google/genai');
 
-const client = new GoogleGenAI({
-  apiKey: process.env.AI_API_KEY,
-});
-
 const askAI = async (systemPrompt, userMessage) => {
+  const apiKey = process.env.AI_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('AI_API_KEY is missing from environment variables.');
+  }
+
+  const client = new GoogleGenAI({ apiKey });
+
   const response = await client.models.generateContent({
     model: process.env.AI_MODEL || 'gemini-2.5-flash',
     contents: userMessage,
@@ -15,7 +19,13 @@ const askAI = async (systemPrompt, userMessage) => {
     },
   });
 
-  return response.text;
+  const answer = response.text;
+
+  if (!answer) {
+    throw new Error('Gemini returned an empty response.');
+  }
+
+  return answer;
 };
 
 module.exports = { askAI };
