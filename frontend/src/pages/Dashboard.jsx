@@ -15,6 +15,7 @@ import Spinner from '../components/common/Spinner';
 import EmptyState from '../components/common/EmptyState';
 import { formatCurrency } from '../utils/formatters';
 import { FiInbox } from 'react-icons/fi';
+import AskBar from '../components/dashboard/AskBar';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -23,6 +24,7 @@ const MONTH_NAMES = [
 
 /**
  * Dashboard Page
+ * - AI ask bar (ask questions about your spending)
  * - Budget alert banner (if any budget has crossed its threshold)
  * - Summary stat cards (Balance, Total Income, Total Expense) — CURRENT MONTH ONLY
  * - Category-wise expense pie chart — CURRENT MONTH ONLY
@@ -109,6 +111,9 @@ const Dashboard = () => {
           <FiPlus size={16} /> Add Transaction
         </button>
       </div>
+
+      {/* AI Ask Bar */}
+      <AskBar />
 
       {/* Budget Alert Banner */}
       {!bannerDismissed && (
