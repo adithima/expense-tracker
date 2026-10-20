@@ -24,7 +24,7 @@ const MONTH_NAMES = [
 
 /**
  * Dashboard Page
- * - AI ask bar (ask questions about your spending)
+ * - AI Assistant button (next to Add Transaction) opens a chat panel
  * - Budget alert banner (if any budget has crossed its threshold)
  * - Summary stat cards (Balance, Total Income, Total Expense) — CURRENT MONTH ONLY
  * - Category-wise expense pie chart — CURRENT MONTH ONLY
@@ -107,13 +107,13 @@ const Dashboard = () => {
             Here's an overview of your finances
           </p>
         </div>
-        <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
-          <FiPlus size={16} /> Add Transaction
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+            <FiPlus size={16} /> Add Transaction
+          </button>
+          <AskBar />
+        </div>
       </div>
-
-      {/* AI Ask Bar */}
-      <AskBar />
 
       {/* Budget Alert Banner */}
       {!bannerDismissed && (
