@@ -1,7 +1,8 @@
-
 const { GoogleGenAI } = require('@google/genai');
 
-const askAI = async (systemPrompt, userMessage) => {
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const callGemini = async (systemPrompt, userMessage) => {
   const apiKey = process.env.AI_API_KEY;
 
   if (!apiKey) {
@@ -26,6 +27,25 @@ const askAI = async (systemPrompt, userMessage) => {
   }
 
   return answer;
+};
+
+const askAI = async (systemPrompt, userMessage, retries = 1) => {
+  try {
+    return await callGemini(systemPrompt, userMessage);
+  } catch (err) {
+    const isOverloaded =
+      err?.status === 503 ||
+      err?.message?.includes('UNAVAILABLE') ||
+      err?.message?.includes('overloaded') ||
+      err?.message?.includes('high demand');
+
+    if (isOverloaded && retries > 0) {
+      await sleep(1500); // wait 1.5s, then try once more before giving up
+      return askAI(systemPrompt, userMessage, retries - 1);
+    }
+
+    throw err;
+  }
 };
 
 module.exports = { askAI };
