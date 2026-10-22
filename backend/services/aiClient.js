@@ -12,7 +12,7 @@ const callGemini = async (systemPrompt, userMessage) => {
   const client = new GoogleGenAI({ apiKey });
 
   const response = await client.models.generateContent({
-    model: process.env.AI_MODEL || 'gemini-2.5-flash',
+    model: process.env.AI_MODEL || 'gemini-3.8-flash',
     contents: userMessage,
     config: {
       systemInstruction: systemPrompt,
